@@ -27,7 +27,7 @@ mongoose.connect('mongodb+srv://qasem:qmfn1993@cluster0.a1tuldd.mongodb.net/atte
 .catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
-app.use('/api/attendance', attendanceRoutes);
+app.use('https://recorde.onrender.com/api/attendance', attendanceRoutes);
 
 // Start server
 app.listen(PORT, '0.0.0.0', () => {
