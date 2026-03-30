@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use(express.static('src/public'));
 
 // Database connection
 // mongoose.connect('mongodb+srv://qasem:qmfn1993@cluster0.a1tuldd.mongodb.net/attendance', {
@@ -18,7 +18,7 @@ app.use(express.static('public'));
 //     useUnifiedTopology: true,
 // })
 
-mongoose.connect('mongodb+srv://qasem:qmfn1993@cluster0.a1tuldd.mongodb.net/?appName=', {
+mongoose.connect('mongodb+srv://qasem:qmfn1993@cluster0.a1tuldd.mongodb.net/attendance', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
