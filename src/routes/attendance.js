@@ -43,10 +43,13 @@ router.post('/checkout', async (req, res) => {
 
 // Route to get attendance records
 router.get('/records', async (req, res) => {
+    console.log('Records route hit');
     try {
         const records = await Record.find();
+        console.log('Records found:', records.length);
         res.status(200).json(records);
     } catch (error) {
+        console.error('Error retrieving records:', error);
         res.status(500).json({ message: 'Error retrieving records', error });
     }
 });

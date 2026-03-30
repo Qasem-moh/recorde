@@ -6,7 +6,7 @@ checkInForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const formData = new FormData(checkInForm);
     try {
-        const response = await fetch('/api/attendance/checkin', {
+        const response = await fetch('https://recorde.onrender.com/api/attendance/checkin', {
             method: 'POST',
             body: formData,
         });
