@@ -31,7 +31,7 @@ checkOutForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const formData = new FormData(checkOutForm);
     try {
-        const response = await fetch('/api/attendance/checkout', {
+        const response = await fetch('https://recorde.onrender.com/api/attendance/checkout', {
             method: 'POST',
             body: formData,
         });
@@ -54,7 +54,7 @@ checkOutForm.addEventListener('submit', async (event) => {
 
 async function fetchAttendanceRecords() {
     try {
-        const response = await fetch('/api/attendance/records');
+        const response = await fetch('https://recorde.onrender.com/api/attendance/records');
         if (!response.ok) {
             console.error('Response status:', response.status);
             const text = await response.text();
