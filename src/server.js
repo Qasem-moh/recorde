@@ -27,7 +27,12 @@ mongoose.connect('mongodb+srv://qasem:qmfn1993@cluster0.a1tuldd.mongodb.net/atte
 .catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
-app.use('https://recorde.onrender.com', attendanceRoutes);
+app.use('/', attendanceRoutes);
+
+// Optional: return JSON 404 for unknown API routes
+app.use('*', (req, res) => {
+    res.status(404).json({ message: 'Route not found' });
+});
 
 // Start server
 app.listen(PORT, '0.0.0.0', () => {

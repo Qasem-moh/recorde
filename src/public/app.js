@@ -17,8 +17,17 @@ checkInForm.addEventListener('submit', async (event) => {
             alert('Error: ' + response.status + ' ' + text);
             return;
         }
-        const result = await response.json();
-        alert(result.message);
+        let result;
+        try {
+            result = await response.json();
+        } catch (parseError) {
+            console.error('JSON parse error:', parseError);
+            const text = await response.text();
+            console.error('Response text:', text);
+            alert('Error: invalid JSON response from server');
+            return;
+        }
+        alert(result.message || 'Success');
         // checkInForm.reset();
         // fetchAttendanceRecords();
     } catch (error) {
@@ -42,8 +51,17 @@ checkOutForm.addEventListener('submit', async (event) => {
             alert('Error: ' + response.status + ' ' + text);
             return;
         }
-        const result = await response.json();
-        alert(result.message);
+        let result;
+        try {
+            result = await response.json();
+        } catch (parseError) {
+            console.error('JSON parse error:', parseError);
+            const text = await response.text();
+            console.error('Response text:', text);
+            alert('Error: invalid JSON response from server');
+            return;
+        }
+        alert(result.message || 'Success');
         checkOutForm.reset();
         // fetchAttendanceRecords();
     } catch (error) {
