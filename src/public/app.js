@@ -20,7 +20,7 @@ checkInForm.addEventListener('submit', async (event) => {
         const result = await response.json();
         alert(result.message);
         // checkInForm.reset();
-        fetchAttendanceRecords();
+        // fetchAttendanceRecords();
     } catch (error) {
         console.error('Fetch error:', error);
         alert('Network error: ' + error.message);
@@ -45,32 +45,32 @@ checkOutForm.addEventListener('submit', async (event) => {
         const result = await response.json();
         alert(result.message);
         checkOutForm.reset();
-        fetchAttendanceRecords();
+        // fetchAttendanceRecords();
     } catch (error) {
         console.error('Fetch error:', error);
         alert('Network error: ' + error.message);
     }
 });
 
-async function fetchAttendanceRecords() {
-    try {
-        const response = await fetch('https://recorde.onrender.com/api/attendance/records');
-        if (!response.ok) {
-            console.error('Response status:', response.status);
-            const text = await response.text();
-            console.error('Response text:', text);
-            return;
-        }
-        const records = await response.json();
-        attendanceRecords.innerHTML = '';
-        records.forEach(record => {
-            const recordElement = document.createElement('div');
-            recordElement.textContent = `Check-in: ${record.checkInTime}, Check-out: ${record.checkOutTime}, Date: ${record.date}`;
-            attendanceRecords.appendChild(recordElement);
-        });
-    } catch (error) {
-        console.error('Fetch error:', error);
-    }
-}
+// async function fetchAttendanceRecords() {
+//     try {
+//         const response = await fetch('https://recorde.onrender.com/api/attendance/records');
+//         if (!response.ok) {
+//             console.error('Response status:', response.status);
+//             const text = await response.text();
+//             console.error('Response text:', text);
+//             return;
+//         }
+//         const records = await response.json();
+//         attendanceRecords.innerHTML = '';
+//         records.forEach(record => {
+//             const recordElement = document.createElement('div');
+//             recordElement.textContent = `Check-in: ${record.checkInTime}, Check-out: ${record.checkOutTime}, Date: ${record.date}`;
+//             attendanceRecords.appendChild(recordElement);
+//         });
+//     } catch (error) {
+//         console.error('Fetch error:', error);
+//     }
+// }
 
-fetchAttendanceRecords();
+// fetchAttendanceRecords();
