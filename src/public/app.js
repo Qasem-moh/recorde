@@ -10,20 +10,19 @@ checkInForm.addEventListener('submit', async (event) => {
             method: 'POST',
             body: formData,
         });
+        const bodyText = await response.text();
         if (!response.ok) {
             console.error('Response status:', response.status);
-            const text = await response.text();
-            console.error('Response text:', text);
-            alert('Error: ' + response.status + ' ' + text);
+            console.error('Response text:', bodyText);
+            alert('Error: ' + response.status + ' ' + bodyText);
             return;
         }
         let result;
         try {
-            result = await response.json();
+            result = JSON.parse(bodyText);
         } catch (parseError) {
             console.error('JSON parse error:', parseError);
-            const text = await response.clone().text();
-            console.error('Response text:', text);
+            console.error('Response text:', bodyText);
             alert('Error: invalid JSON response from server');
             return;
         }
@@ -44,20 +43,19 @@ checkOutForm.addEventListener('submit', async (event) => {
             method: 'POST',
             body: formData,
         });
+        const bodyText = await response.text();
         if (!response.ok) {
             console.error('Response status:', response.status);
-            const text = await response.text();
-            console.error('Response text:', text);
-            alert('Error: ' + response.status + ' ' + text);
+            console.error('Response text:', bodyText);
+            alert('Error: ' + response.status + ' ' + bodyText);
             return;
         }
         let result;
         try {
-            result = await response.json();
+            result = JSON.parse(bodyText);
         } catch (parseError) {
             console.error('JSON parse error:', parseError);
-            const text = await response.clone().text();
-            console.error('Response text:', text);
+            console.error('Response text:', bodyText);
             alert('Error: invalid JSON response from server');
             return;
         }
