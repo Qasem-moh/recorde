@@ -5,88 +5,38 @@ const attendanceRecords = document.getElementById('attendanceRecords');
 checkInForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const formData = new FormData(checkInForm);
-    try {
-        const response = await fetch('https://recorde.onrender.com/checkin', {
-            method: 'POST',
-            body: formData,
-        });
-        const bodyText = await response.text();
-        if (!response.ok) {
-            console.error('Response status:', response.status);
-            console.error('Response text:', bodyText);
-            alert('Error: ' + response.status + ' ' + bodyText);
-            return;
-        }
-        let result;
-        try {
-            result = JSON.parse(bodyText);
-        } catch (parseError) {
-            console.error('JSON parse error:', parseError);
-            console.error('Response text:', bodyText);
-            alert('Error: invalid JSON response from server');
-            return;
-        }
-        alert(result.message || 'Success');
-        // checkInForm.reset();
-        // fetchAttendanceRecords();
-    } catch (error) {
-        console.error('Fetch error:', error);
-        alert('Network error: ' + error.message);
-    }
+    const response = await fetch('http://localhost:3000/api/attendance/checkin', {
+        method: 'POST',
+        body: formData,
+    });
+    const result = await response.json();
+    alert(result.message);
+    // checkInForm.reset();
+    fetchAttendanceRecords();
 });
 
 checkOutForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const formData = new FormData(checkOutForm);
-    try {
-        const response = await fetch('https://recorde.onrender.com/checkout', {
-            method: 'POST',
-            body: formData,
-        });
-        const bodyText = await response.text();
-        if (!response.ok) {
-            console.error('Response status:', response.status);
-            console.error('Response text:', bodyText);
-            alert('Error: ' + response.status + ' ' + bodyText);
-            return;
-        }
-        let result;
-        try {
-            result = JSON.parse(bodyText);
-        } catch (parseError) {
-            console.error('JSON parse error:', parseError);
-            console.error('Response text:', bodyText);
-            alert('Error: invalid JSON response from server');
-            return;
-        }
-        alert(result.message || 'Success');
-        checkOutForm.reset();
-        // fetchAttendanceRecords();
-    } catch (error) {
-        console.error('Fetch error:', error);
-        alert('Network error: ' + error.message);
-    }
+    const response = await fetch('http://localhost:3000/api/attendance/checkout', {
+        method: 'POST',
+        body: formData,
+    });
+    const result = await response.json();
+    alert(result.message);
+    checkOutForm.reset();
+    fetchAttendanceRecords();
 });
 
-// async function fetchAttendanceRecords() {
-//     try {
-//         const response = await fetch('https://recorde.onrender.com/api/attendance/records');
-//         if (!response.ok) {
-//             console.error('Response status:', response.status);
-//             const text = await response.text();
-//             console.error('Response text:', text);
-//             return;
-//         }
-//         const records = await response.json();
-//         attendanceRecords.innerHTML = '';
-//         records.forEach(record => {
-//             const recordElement = document.createElement('div');
-//             recordElement.textContent = `Check-in: ${record.checkInTime}, Check-out: ${record.checkOutTime}, Date: ${record.date}`;
-//             attendanceRecords.appendChild(recordElement);
-//         });
-//     } catch (error) {
-//         console.error('Fetch error:', error);
-//     }
-// }
+async function fetchAttendanceRecords() {
+    const response = await fetch('http://localhost:3000/api/attendance/records');
+    const records = await response.json();
+    attendanceRecords.innerHTML = '';
+    records.forEach(record => {
+        const recordElement = document.createElement('div');
+        recordElement.textContent = `Employee ID: ${record.employeeId}, Check-in: ${record.checkIn}, Check-out: ${record.checkOut}, Date: ${record.date}`;
+        attendanceRecords.appendChild(recordElement);
+    });
+}
 
-// fetchAttendanceRecords();
+fetchAttendanceRecords();
