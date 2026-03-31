@@ -25,3 +25,6 @@
   "engines": {
     "node": "18"
   },
+  "author": "Your Name",
+  "license": "ISC"
+}
