@@ -22,6 +22,6 @@
     "check-in",
     "check-out"
   ],
-  "author": "Your Name",
-  "license": "ISC"
-}
+  "engines": {
+    "node": "18"
+  },
