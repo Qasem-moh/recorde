@@ -27,6 +27,10 @@ mongoose.connect('mongodb+srv://qasem:qmfn1993@cluster0.a1tuldd.mongodb.net/atte
 .catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 app.use('/', attendanceRoutes);
 
 // Optional: return JSON 404 for unknown API routes
