@@ -22,8 +22,8 @@ mongoose.connect('mongodb+srv://qasem:qmfn1993@cluster0.a1tuldd.mongodb.net/atte
 //     useNewUrlParser: true,
 //     useUnifiedTopology: true,
 // })
-// .then(() => console.log('MongoDB connected'))
-// .catch(err => console.error('MongoDB connection error:', err));
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
 app.use('/api/attendance', attendanceRoutes);
