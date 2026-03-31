@@ -6,7 +6,7 @@ checkInForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const formData = new FormData(checkInForm);
     try {
-        const response = await fetch('https://recorde.onrender.com/api/attendance/checkin', {
+        const response = await fetch('https://recorde.onrender.com/checkin', {
             method: 'POST',
             body: formData,
         });
@@ -31,7 +31,7 @@ checkOutForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const formData = new FormData(checkOutForm);
     try {
-        const response = await fetch('https://recorde.onrender.com/api/attendance/checkout', {
+        const response = await fetch('https://recorde.onrender.com/checkout', {
             method: 'POST',
             body: formData,
         });
