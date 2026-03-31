@@ -21,7 +21,7 @@ checkInForm.addEventListener('submit', async (event) => {
         try {
             result = await response.json();
         } catch (parseError) {
-            console.error('JSON parse error:', parseError);
+            // console.error('JSON parse error:', parseError);
             const text = await response.text();
             console.error('Response text:', text);
             alert('Error: invalid JSON response from server');
