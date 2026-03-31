@@ -21,8 +21,8 @@ checkInForm.addEventListener('submit', async (event) => {
         try {
             result = await response.json();
         } catch (parseError) {
-            // console.error('JSON parse error:', parseError);
-            const text = await response.text();
+            console.error('JSON parse error:', parseError);
+            const text = await response.clone().text();
             console.error('Response text:', text);
             alert('Error: invalid JSON response from server');
             return;
@@ -56,7 +56,7 @@ checkOutForm.addEventListener('submit', async (event) => {
             result = await response.json();
         } catch (parseError) {
             console.error('JSON parse error:', parseError);
-            const text = await response.text();
+            const text = await response.clone().text();
             console.error('Response text:', text);
             alert('Error: invalid JSON response from server');
             return;
