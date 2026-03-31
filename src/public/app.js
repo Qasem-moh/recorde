@@ -9,7 +9,7 @@ checkInForm.addEventListener('submit', async (event) => {
         method: 'POST',
         body: formData,
     });
-    const result = await response.text();
+    const result = await response.json();
     alert(result.message);
     // checkInForm.reset();
     // fetchAttendanceRecords();
