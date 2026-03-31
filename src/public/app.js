@@ -12,7 +12,7 @@ checkInForm.addEventListener('submit', async (event) => {
     const result = await response.json();
     alert(result.message);
     // checkInForm.reset();
-    fetchAttendanceRecords();
+    // fetchAttendanceRecords();
 });
 
 checkOutForm.addEventListener('submit', async (event) => {
@@ -25,18 +25,18 @@ checkOutForm.addEventListener('submit', async (event) => {
     const result = await response.json();
     alert(result.message);
     checkOutForm.reset();
-    fetchAttendanceRecords();
+    // fetchAttendanceRecords();
 });
 
-async function fetchAttendanceRecords() {
-    const response = await fetch('https://recorde.onrender.com/api/attendance/records');
-    const records = await response.json();
-    attendanceRecords.innerHTML = '';
-    records.forEach(record => {
-        const recordElement = document.createElement('div');
-        recordElement.textContent = `Employee ID: ${record.employeeId}, Check-in: ${record.checkIn}, Check-out: ${record.checkOut}, Date: ${record.date}`;
-        attendanceRecords.appendChild(recordElement);
-    });
-}
+// async function fetchAttendanceRecords() {
+//     const response = await fetch('https://recorde.onrender.com/api/attendance/records');
+//     const records = await response.json();
+//     attendanceRecords.innerHTML = '';
+//     records.forEach(record => {
+//         const recordElement = document.createElement('div');
+//         recordElement.textContent = `Employee ID: ${record.employeeId}, Check-in: ${record.checkIn}, Check-out: ${record.checkOut}, Date: ${record.date}`;
+//         attendanceRecords.appendChild(recordElement);
+//     });
+// }
 
-fetchAttendanceRecords();
+// fetchAttendanceRecords();
