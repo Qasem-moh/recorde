@@ -5,7 +5,7 @@ const attendanceRecords = document.getElementById('attendanceRecords');
 checkInForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const formData = new FormData(checkInForm);
-    const response = await fetch('http://localhost:3000/api/attendance/checkin', {
+    const response = await fetch('https://recorde.onrender.com/api/attendance/checkin', {
         method: 'POST',
         body: formData,
     });
@@ -18,7 +18,7 @@ checkInForm.addEventListener('submit', async (event) => {
 checkOutForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const formData = new FormData(checkOutForm);
-    const response = await fetch('http://localhost:3000/api/attendance/checkout', {
+    const response = await fetch('https://recorde.onrender.com/api/attendance/checkout', {
         method: 'POST',
         body: formData,
     });
@@ -29,7 +29,7 @@ checkOutForm.addEventListener('submit', async (event) => {
 });
 
 async function fetchAttendanceRecords() {
-    const response = await fetch('http://localhost:3000/api/attendance/records');
+    const response = await fetch('https://recorde.onrender.com/api/attendance/records');
     const records = await response.json();
     attendanceRecords.innerHTML = '';
     records.forEach(record => {
