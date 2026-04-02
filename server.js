@@ -57,7 +57,7 @@ mongoose.connect(mongoURI, {
     bufferCommands: false, // Disable mongoose buffering
     bufferMaxEntries: 0, // Disable mongoose buffering
 })
-})
+
     .then(() => console.log('✅ MongoDB connected'))
     .catch(err => {
         console.error('❌ MongoDB connection error:', err.message);
