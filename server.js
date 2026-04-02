@@ -14,7 +14,8 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 
 // Database connection
-mongoose.connect('mongodb+srv://qasem:qmfn1993@cluster0.a1tuldd.mongodb.net/attendance', {
+const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://qasem:qmfn1993@cluster0.a1tuldd.mongodb.net/attendance';
+mongoose.connect(mongoURI, {
     // useNewUrlParser: true,
     // useUnifiedTopology: true,
 })
