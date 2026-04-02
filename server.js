@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const attendanceRoutes = require('./routes/attendance');
 
 const app = express();
@@ -14,7 +15,7 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 
 // Database connection
-const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://qasem:qmfn1993@cluster0.a1tuldd.mongodb.net/attendance';
+const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/attendance';
 mongoose.connect(mongoURI, {
     // useNewUrlParser: true,
     // useUnifiedTopology: true,
@@ -33,7 +34,15 @@ app.use('/api/attendance', attendanceRoutes);
 // Serve React app only in production (after building)
 if (process.env.NODE_ENV === 'production') {
     app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, 'public', 'index.html'));
+        const indexPath = path.join(__dirname, 'public', 'index.html');
+        console.log('Serving from:', indexPath);
+        console.log('File exists:', fs.existsSync(indexPath));
+        res.sendFile(indexPath, (err) => {
+            if (err) {
+                console.error('Error serving index.html:', err);
+                res.status(404).json({ error: 'Not found' });
+            }
+        });
     });
 }
 
