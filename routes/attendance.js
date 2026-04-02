@@ -2,6 +2,16 @@ const express = require('express');
 const router = express.Router();
 const Record = require('../models/record');
 
+// Route to get all attendance records
+router.get('/', async (req, res) => {
+    try {
+        const records = await Record.find();
+        res.status(200).json(records);
+    } catch (error) {
+        res.status(500).json({ message: 'Error retrieving records', error });
+    }
+});
+
 // Route to check in an employee
 router.post('/checkin', async (req, res) => {
     const checkInTime = new Date();
@@ -28,7 +38,7 @@ router.post('/checkout', async (req, res) => {
         const record = await Record.findOneAndUpdate(
             { date: checkOutTime.toISOString().split('T')[0], checkOutTime: null },
             { checkOutTime },
-            { new: true }
+            { returnDocument: 'after' }
         );
 
         if (!record) {
@@ -38,16 +48,6 @@ router.post('/checkout', async (req, res) => {
         res.status(200).json({ message: 'Check-out recorded', record });
     } catch (error) {
         res.status(500).json({ message: 'Error recording check-out', error });
-    }
-});
-
-// Route to get attendance records
-router.get('/records', async (req, res) => {
-    try {
-        const records = await Record.find();
-        res.status(200).json(records);
-    } catch (error) {
-        res.status(500).json({ message: 'Error retrieving records', error });
     }
 });
 
