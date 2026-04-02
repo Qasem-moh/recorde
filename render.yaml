@@ -3,8 +3,8 @@ services:
     name: attendance-tracker
     env: node
     plan: free
-    buildCommand: npm install && npm run build && echo "Build complete - checking for files:" && ls -la public/ || echo "public folder not found"
-    startCommand: npm start
+    buildCommand: echo "Starting build..." && npm install && echo "Running vite build..." && npm run build && echo "✅ Build complete!" && ls -la public/
+    startCommand: node server.js
     envVars:
       - key: NODE_ENV
         value: production

@@ -8,6 +8,7 @@ export default defineConfig({
     outDir: path.resolve(__dirname, 'public'),
     emptyOutDir: true,
     sourcemap: false,
+    reportCompressedSize: false,
   },
   server: {
     port: 5173,
