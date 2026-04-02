@@ -32,7 +32,7 @@ if (fs.existsSync(publicDir)) {
 }
 
 // Database connection
-const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/attendance';
+const mongoURI =  'mongodb+srv://qasem:qmfn1993@cluster0.a1tuldd.mongodb.net/attendance?retryWrites=true&w=majority';
 
 if (!mongoURI) {
     console.error('❌ MONGODB_URI is not defined');
