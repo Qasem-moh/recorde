@@ -8,7 +8,13 @@ router.get('/', async (req, res) => {
         const records = await Record.find();
         res.status(200).json(records);
     } catch (error) {
-        res.status(500).json({ message: 'Error retrieving records', error });
+        console.error('❌ GET /api/attendance error:', error);
+        const errorDetails = typeof error === 'object' ? JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error))) : error;
+        res.status(500).json({
+            message: 'Error retrieving records',
+            error: errorDetails,
+            stack: error.stack || null,
+        });
     }
 });
 
@@ -25,7 +31,13 @@ router.post('/checkin', async (req, res) => {
         await record.save();
         res.status(201).json({ message: 'Check-in recorded', record });
     } catch (error) {
-        res.status(500).json({ message: 'Error recording check-in', error });
+        console.error('❌ POST /api/attendance/checkin error:', error);
+        const errorDetails = typeof error === 'object' ? JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error))) : error;
+        res.status(500).json({
+            message: 'Error recording check-in',
+            error: errorDetails,
+            stack: error.stack || null,
+        });
     }
 });
 
@@ -47,7 +59,13 @@ router.post('/checkout', async (req, res) => {
 
         res.status(200).json({ message: 'Check-out recorded', record });
     } catch (error) {
-        res.status(500).json({ message: 'Error recording check-out', error });
+        console.error('❌ POST /api/attendance/checkout error:', error);
+        const errorDetails = typeof error === 'object' ? JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error))) : error;
+        res.status(500).json({
+            message: 'Error recording check-out',
+            error: errorDetails,
+            stack: error.stack || null,
+        });
     }
 });
 

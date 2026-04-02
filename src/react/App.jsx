@@ -16,10 +16,16 @@ export default function App() {
     try {
       setLoading(true)
       const response = await fetch('/api/attendance')
+      if (!response.ok) {
+        const err = await response.text()
+        console.error('API returned error:', response.status, err)
+        throw new Error(`API /api/attendance failed ${response.status}: ${err}`)
+      }
       const data = await response.json()
       setAttendanceRecords(data)
     } catch (error) {
       console.error('Error fetching records:', error)
+      alert('Problem fetching attendance records: ' + error.message)
     } finally {
       setLoading(false)
     }
