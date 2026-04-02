@@ -32,7 +32,13 @@ if (fs.existsSync(publicDir)) {
 }
 
 // Database connection
-const mongoURI ='mongodb+srv://qasem:qmfn1993@cluster0.a1tuldd.mongodb.net/attendance?retryWrites=true&w=majority'.replace('<db_password>', process.env.MONGODB_URI_PASSWORD || 'your_password_here');
+const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/attendance';
+
+if (!mongoURI) {
+    console.error('❌ MONGODB_URI is not defined');
+    process.exit(1);
+}
+
 if (!process.env.MONGODB_URI && process.env.NODE_ENV === 'production') {
     console.error('❌ MONGODB_URI environment variable is not set in production.');
     console.error('Set MONGODB_URI in Render dashboard to your Atlas connection string.');
@@ -40,17 +46,17 @@ if (!process.env.MONGODB_URI && process.env.NODE_ENV === 'production') {
 }
 
 mongoose.connect(mongoURI)
-    .then(() => console.log('✅ MongoDB connected:', mongoURI))
+    .then(() => console.log('✅ MongoDB connected'))
     .catch(err => {
-        console.error('❌ MongoDB connection error:', err);
+        console.error('❌ MongoDB connection error:', err.message);
         if (process.env.NODE_ENV === 'production') {
             process.exit(1);
         }
     });
 
-mongoose.connection.on('connected', () => console.log('MongoDB connection open.'));
-mongoose.connection.on('error', err => console.error('MongoDB connection error (event):', err));
-mongoose.connection.on('disconnected', () => console.warn('MongoDB disconnected.'));
+mongoose.connection.on('connected', () => console.log('✓ MongoDB connection open.'));
+mongoose.connection.on('error', err => console.error('✗ MongoDB connection error (event):', err.message));
+mongoose.connection.on('disconnected', () => console.warn('⚠️  MongoDB disconnected.'));
 
 // Routes
 app.use('/api/attendance', attendanceRoutes);
