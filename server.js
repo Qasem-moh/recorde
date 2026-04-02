@@ -12,7 +12,14 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Debug: Log directory info
+console.log('Current directory:', __dirname);
+console.log('Public folder exists:', fs.existsSync(path.join(__dirname, 'public')));
+if (fs.existsSync(path.join(__dirname, 'public'))) {
+    console.log('Files in public:', fs.readdirSync(path.join(__dirname, 'public')));
+}
 
 // Database connection
 const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/attendance';
@@ -35,12 +42,25 @@ app.use('/api/attendance', attendanceRoutes);
 if (process.env.NODE_ENV === 'production') {
     app.get('*', (req, res) => {
         const indexPath = path.join(__dirname, 'public', 'index.html');
+        console.log('Request for:', req.path);
         console.log('Serving from:', indexPath);
         console.log('File exists:', fs.existsSync(indexPath));
+        
+        // Check if public directory exists
+        const publicDir = path.join(__dirname, 'public');
+        if (!fs.existsSync(publicDir)) {
+            console.error('Public directory not found at:', publicDir);
+            return res.status(500).json({ 
+                error: 'Build files not found. Ensure npm run build completed successfully.',
+                publicDir: publicDir,
+                exists: false 
+            });
+        }
+        
         res.sendFile(indexPath, (err) => {
             if (err) {
                 console.error('Error serving index.html:', err);
-                res.status(404).json({ error: 'Not found' });
+                res.status(404).json({ error: 'index.html not found' });
             }
         });
     });

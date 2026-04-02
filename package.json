@@ -2,7 +2,7 @@
   "name": "attendance-tracker",
   "version": "1.0.0",
   "description": "A simple attendance tracking application to record check-ins and check-outs.",
-  "main": "src/server.js",
+  "main": "server.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "nodemon server.js",
