@@ -40,15 +40,27 @@ export default function App() {
         },
         body: JSON.stringify({
           checkInTime: new Date(),
-          name: 'User', // Replace with actual user input
+          name: 'User',
         }),
-      })
-      const data = await response.json()
-      setCheckInTime(new Date().toLocaleTimeString())
-      console.log('Check-in successful:', data)
-      fetchRecords()
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+        throw new Error(errorData.message || `HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        setCheckInTime(new Date().toLocaleTimeString());
+        console.log('Check-in successful:', data);
+        fetchRecords();
+        alert('✅ Check-in recorded successfully!');
+      } else {
+        throw new Error(data.message || 'Check-in failed');
+      }
     } catch (error) {
-      console.error('Error checking in:', error)
+      console.error('Error checking in:', error);
+      alert('❌ Error checking in: ' + error.message);
     }
   }
 
@@ -62,13 +74,25 @@ export default function App() {
         body: JSON.stringify({
           checkOutTime: new Date(),
         }),
-      })
-      const data = await response.json()
-      setCheckOutTime(new Date().toLocaleTimeString())
-      console.log('Check-out successful:', data)
-      fetchRecords()
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+        throw new Error(errorData.message || `HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        setCheckOutTime(new Date().toLocaleTimeString());
+        console.log('Check-out successful:', data);
+        fetchRecords();
+        alert('✅ Check-out recorded successfully!');
+      } else {
+        throw new Error(data.message || 'Check-out failed');
+      }
     } catch (error) {
-      console.error('Error checking out:', error)
+      console.error('Error checking out:', error);
+      alert('❌ Error checking out: ' + error.message);
     }
   }
 

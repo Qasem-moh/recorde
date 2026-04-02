@@ -24,6 +24,11 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(publicDir));
 
+// Keep-alive endpoint for Render (prevents service from sleeping)
+app.get('/ping', (req, res) => {
+    res.status(200).json({ status: 'alive', timestamp: new Date().toISOString() });
+});
+
 // Debug: Log directory info
 if (fs.existsSync(publicDir)) {
     console.log('✓ Files in public:', fs.readdirSync(publicDir));
@@ -32,7 +37,7 @@ if (fs.existsSync(publicDir)) {
 }
 
 // Database connection
-const mongoURI =  'mongodb+srv://qasem:qmfn1993@cluster0.a1tuldd.mongodb.net/attendance?retryWrites=true&w=majority';
+const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://qasem:qmfn1993@cluster0.a1tuldd.mongodb.net/attendance?retryWrites=true&w=majority';
 
 if (!mongoURI) {
     console.error('❌ MONGODB_URI is not defined');
@@ -45,7 +50,14 @@ if (!process.env.MONGODB_URI && process.env.NODE_ENV === 'production') {
     process.exit(1);
 }
 
-mongoose.connect(mongoURI)
+mongoose.connect(mongoURI, {
+    serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+    socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+    maxPoolSize: 10, // Maintain up to 10 socket connections
+    bufferCommands: false, // Disable mongoose buffering
+    bufferMaxEntries: 0, // Disable mongoose buffering
+})
+})
     .then(() => console.log('✅ MongoDB connected'))
     .catch(err => {
         console.error('❌ MongoDB connection error:', err.message);
@@ -60,6 +72,17 @@ mongoose.connection.on('disconnected', () => console.warn('⚠️  MongoDB disco
 
 // Routes
 app.use('/api/attendance', attendanceRoutes);
+
+// Health check endpoint for Render
+app.get('/health', (req, res) => {
+    const isDbConnected = mongoose.connection.readyState === 1;
+    res.status(isDbConnected ? 200 : 503).json({
+        status: isDbConnected ? 'healthy' : 'unhealthy',
+        database: isDbConnected ? 'connected' : 'disconnected',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+    });
+});
 
 // Serve React app only in production (after building)
 if (nodeEnv === 'production') {

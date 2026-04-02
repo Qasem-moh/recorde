@@ -20,16 +20,20 @@ router.get('/', async (req, res) => {
 
 // Route to check in an employee
 router.post('/checkin', async (req, res) => {
-    const checkInTime = new Date();
-
     try {
+        const checkInTime = new Date();
+
         const record = new Record({
             checkInTime,
             checkOutTime: null,
             date: checkInTime.toISOString().split('T')[0]
         });
         await record.save();
-        res.status(201).json({ message: 'Check-in recorded', record });
+        res.status(201).json({
+            message: 'Check-in recorded',
+            record,
+            success: true
+        });
     } catch (error) {
         console.error('❌ POST /api/attendance/checkin error:', error);
         const errorDetails = typeof error === 'object' ? JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error))) : error;
@@ -37,16 +41,16 @@ router.post('/checkin', async (req, res) => {
             message: 'Error recording check-in',
             error: errorDetails,
             stack: error.stack || null,
+            success: false
         });
     }
 });
 
 // Route to check out an employee
 router.post('/checkout', async (req, res) => {
-
-    const checkOutTime = new Date();
-
     try {
+        const checkOutTime = new Date();
+
         const record = await Record.findOneAndUpdate(
             { date: checkOutTime.toISOString().split('T')[0], checkOutTime: null },
             { checkOutTime },
@@ -54,10 +58,17 @@ router.post('/checkout', async (req, res) => {
         );
 
         if (!record) {
-            return res.status(404).json({ message: 'No check-in record found for today' });
+            return res.status(404).json({
+                message: 'No check-in record found for today',
+                success: false
+            });
         }
 
-        res.status(200).json({ message: 'Check-out recorded', record });
+        res.status(200).json({
+            message: 'Check-out recorded',
+            record,
+            success: true
+        });
     } catch (error) {
         console.error('❌ POST /api/attendance/checkout error:', error);
         const errorDetails = typeof error === 'object' ? JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error))) : error;
@@ -65,6 +76,7 @@ router.post('/checkout', async (req, res) => {
             message: 'Error recording check-out',
             error: errorDetails,
             stack: error.stack || null,
+            success: false
         });
     }
 });
