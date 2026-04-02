@@ -32,7 +32,7 @@ if (fs.existsSync(publicDir)) {
 }
 
 // Database connection
-const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/attendance';
+const mongoURI = process.env.MONGODB_URI || ' mongodb+srv://qasem:qmfn1993@cluster0.a1tuldd.mongodb.net/attendance';
 mongoose.connect(mongoURI, {
     // useNewUrlParser: true,
     // useUnifiedTopology: true,
