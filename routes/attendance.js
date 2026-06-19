@@ -81,4 +81,25 @@ router.post('/checkout', async (req, res) => {
     }
 });
 
+// Route to delete all attendance records
+router.delete('/delete-all', async (req, res) => {
+    try {
+        const result = await Record.deleteMany({});
+        res.status(200).json({
+            message: 'All records deleted successfully',
+            deletedCount: result.deletedCount,
+            success: true
+        });
+    } catch (error) {
+        console.error('❌ DELETE /api/attendance/delete-all error:', error);
+        const errorDetails = typeof error === 'object' ? JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error))) : error;
+        res.status(500).json({
+            message: 'Error deleting records',
+            error: errorDetails,
+            stack: error.stack || null,
+            success: false
+        });
+    }
+});
+
 module.exports = router;
