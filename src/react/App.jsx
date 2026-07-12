@@ -7,7 +7,7 @@ export default function App() {
   const [attendanceRecords, setAttendanceRecords] = useState([])
   const [loading, setLoading] = useState(false)
   const [monthlySalary, setMonthlySalary] = useState(500)
-  const [workingDaysPerMonth, setWorkingDaysPerMonth] = useState(30)
+  const [workingDaysPerMonth, setWorkingDaysPerMonth] = useState(28)
 
   // Fetch attendance records
   useEffect(() => {
