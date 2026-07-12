@@ -240,7 +240,7 @@ export default function App() {
             id="workingDays"
             type="number"
             value={workingDaysPerMonth}
-            onChange={(e) => setWorkingDaysPerMonth(parseInt(e.target.value) || 30)}
+            onChange={(e) => setWorkingDaysPerMonth(parseInt(e.target.value) || 28)}
             min="1"
             max="31"
             step="1"
