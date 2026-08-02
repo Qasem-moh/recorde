@@ -6,7 +6,7 @@ export default function App() {
   const [checkOutTime, setCheckOutTime] = useState(null)
   const [attendanceRecords, setAttendanceRecords] = useState([])
   const [loading, setLoading] = useState(false)
-  const [monthlySalary, setMonthlySalary] = useState(500)
+  const [monthlySalary, setMonthlySalary] = useState(530)
   const [workingDaysPerMonth, setWorkingDaysPerMonth] = useState(28)
 
   // Fetch attendance records
