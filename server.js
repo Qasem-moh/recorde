@@ -37,16 +37,16 @@ if (fs.existsSync(publicDir)) {
 }
 
 // Database connection
-const mongoURI =  'mongodb+srv://qasem:qmfn1993@cluster0.a1tuldd.mongodb.net/attendance?retryWrites=true&w=majority';
+const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://qasem:qmfn1993@cluster0.a1tuldd.mongodb.net/attendance?retryWrites=true&w=majority';
 
-if (!mongoURI) {
-    console.error('❌ MONGODB_URI is not defined');
+if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
+    console.error('❌ MONGODB_URI environment variable is not set in production.');
+    console.error('Set MONGODB_URI in Render dashboard to your Atlas connection string.');
     process.exit(1);
 }
 
-if (!process.env.MONGODB_URI && process.env.NODE_ENV === 'production') {
-    console.error('❌ MONGODB_URI environment variable is not set in production.');
-    console.error('Set MONGODB_URI in Render dashboard to your Atlas connection string.');
+if (!mongoURI) {
+    console.error('❌ MongoDB connection string is not defined.');
     process.exit(1);
 }
 
