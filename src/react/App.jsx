@@ -105,6 +105,7 @@ export default function App() {
     const checkIn = new Date(checkInTime);
     const checkOut = new Date(checkOutTime);
     const diffMs = checkOut - checkIn;
+    if (diffMs <= 0) return '—';
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
     const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
     return `${diffHours}h ${diffMinutes}m`;
@@ -119,11 +120,10 @@ export default function App() {
     const diffMs = checkOut - checkIn;
     const totalHours = diffMs / (1000 * 60 * 60);
     const standardHours = 10;
-    
-    if (totalHours <= standardHours) {
+    if (totalHours <= standardHours || totalHours <= 0) {
       return '0h 0m';
     }
-    
+
     const overtimeHours = Math.floor(totalHours - standardHours);
     const overtimeMinutes = Math.round(((totalHours - standardHours) % 1) * 60);
     return `${overtimeHours}h ${overtimeMinutes}m`;
@@ -140,13 +140,14 @@ export default function App() {
     const checkOut = new Date(checkOutTime);
     const diffMs = checkOut - checkIn;
     const totalHours = diffMs / (1000 * 60 * 60);
+    if (totalHours <= 0) return 0;
     const standardHours = 10;
     const standardWage = standardHours * calculateHourlyRate();
-    
+
     if (totalHours <= standardHours) {
       return (totalHours * calculateHourlyRate()).toFixed(2);
     }
-    
+
     return standardWage.toFixed(2);
   }
 
@@ -157,11 +158,10 @@ export default function App() {
     const diffMs = checkOut - checkIn;
     const totalHours = diffMs / (1000 * 60 * 60);
     const standardHours = 10;
-    
-    if (totalHours <= standardHours) {
+    if (totalHours <= standardHours || totalHours <= 0) {
       return 0;
     }
-    
+
     const overtimeHours = totalHours - standardHours;
     const hourlyRate = calculateHourlyRate();
     return (overtimeHours * hourlyRate).toFixed(2);
@@ -174,6 +174,8 @@ export default function App() {
       const overtimeWage = parseFloat(calculateOvertimeWage(record.checkInTime, record.checkOutTime)) || 0;
       total += dailyWage + overtimeWage;
     });
+    // Ensure final total is not negative due to any incorrect timestamps
+    total = Math.max(0, total);
     return total.toFixed(2);
   }
 
