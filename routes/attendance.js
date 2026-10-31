@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Record = require('../models/record');
+const { getLocalDateString } = require('../utils/date');
 
 // Route to get all attendance records
 router.get('/', async (req, res) => {
@@ -26,7 +27,7 @@ router.post('/checkin', async (req, res) => {
         const record = new Record({
             checkInTime,
             checkOutTime: null,
-            date: checkInTime.toISOString().split('T')[0]
+            date: getLocalDateString(checkInTime)
         });
         await record.save();
         res.status(201).json({
@@ -50,16 +51,23 @@ router.post('/checkin', async (req, res) => {
 router.post('/checkout', async (req, res) => {
     try {
         const checkOutTime = new Date();
-
-        const record = await Record.findOneAndUpdate(
-            { date: checkOutTime.toISOString().split('T')[0], checkOutTime: null },
+        let record = await Record.findOneAndUpdate(
+            { date: getLocalDateString(checkOutTime), checkOutTime: null },
             { checkOutTime },
             { returnDocument: 'after' }
         );
 
         if (!record) {
+            record = await Record.findOneAndUpdate(
+                { checkOutTime: null },
+                { checkOutTime },
+                { sort: { checkInTime: -1 }, returnDocument: 'after' }
+            );
+        }
+
+        if (!record) {
             return res.status(404).json({
-                message: 'No check-in record found for today',
+                message: 'No check-in record found for the current day',
                 success: false
             });
         }
