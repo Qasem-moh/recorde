@@ -8,6 +8,13 @@ export default function App() {
   const [loading, setLoading] = useState(false)
   const [monthlySalary, setMonthlySalary] = useState(530)
   const [workingDaysPerMonth, setWorkingDaysPerMonth] = useState(28)
+  const getLocalMonthKey = (date = new Date()) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    return `${year}-${month}`;
+  };
+  const currentMonth = getLocalMonthKey()
+  const [selectedMonth, setSelectedMonth] = useState(currentMonth)
 
   // Fetch attendance records
   useEffect(() => {
@@ -167,21 +174,156 @@ export default function App() {
     return (overtimeHours * hourlyRate).toFixed(2);
   }
 
+  const getMonthOptions = () => {
+    const months = new Set();
+
+    attendanceRecords.forEach((record) => {
+      const dateKey = typeof record.date === 'string'
+        ? record.date.slice(0, 7)
+        : getLocalMonthKey(new Date(record.checkInTime));
+      if (dateKey) months.add(dateKey);
+    });
+
+    const sortedMonths = [...months].sort().reverse();
+    if (!sortedMonths.includes(currentMonth)) {
+      sortedMonths.unshift(currentMonth);
+    }
+
+    return sortedMonths;
+  };
+
+  const filteredRecords = attendanceRecords.filter((record) => {
+    const dateKey = typeof record.date === 'string'
+      ? record.date.slice(0, 7)
+      : getLocalMonthKey(new Date(record.checkInTime));
+    return dateKey === selectedMonth;
+  });
+
   const calculateTotalWage = () => {
     let total = 0;
-    attendanceRecords.forEach((record) => {
+    filteredRecords.forEach((record) => {
       const dailyWage = parseFloat(calculateDailyWage(record.checkInTime, record.checkOutTime)) || 0;
       const overtimeWage = parseFloat(calculateOvertimeWage(record.checkInTime, record.checkOutTime)) || 0;
       total += dailyWage + overtimeWage;
     });
-    // Ensure final total is not negative due to any incorrect timestamps
     total = Math.max(0, total);
     return total.toFixed(2);
   }
 
   const getWorkedDaysCount = () => {
-    return attendanceRecords.filter(record => record.checkOutTime).length;
+    return filteredRecords.filter(record => record.checkOutTime).length;
   }
+
+  const escapeCsvValue = (value) => {
+    const stringValue = String(value ?? '').replace(/\r?\n/g, ' ');
+    return `"${stringValue.replace(/"/g, '""')}"`;
+  };
+
+  const exportToExcel = () => {
+    if (!filteredRecords.length) {
+      alert('لا توجد سجلات لهذا الشهر لحفظها في ملف Excel.');
+      return;
+    }
+
+    const header = [
+      'Date',
+      'Check-in',
+      'Check-out',
+      'Working Hours',
+      'Overtime',
+      'Daily Wage',
+      'Overtime Wage',
+      'Total'
+    ];
+
+    const rows = filteredRecords.map((record) => [
+      new Date(record.date).toLocaleDateString(),
+      new Date(record.checkInTime).toLocaleTimeString(),
+      record.checkOutTime ? new Date(record.checkOutTime).toLocaleTimeString() : 'Not checked out',
+      calculateWorkingHours(record.checkInTime, record.checkOutTime),
+      calculateOvertimeHours(record.checkInTime, record.checkOutTime),
+      `JD${calculateDailyWage(record.checkInTime, record.checkOutTime)}`,
+      `JD${calculateOvertimeWage(record.checkInTime, record.checkOutTime)}`,
+      `JD${(parseFloat(calculateDailyWage(record.checkInTime, record.checkOutTime)) + parseFloat(calculateOvertimeWage(record.checkInTime, record.checkOutTime))).toFixed(2)}`
+    ]);
+
+    const csv = [header, ...rows].map((row) => row.map(escapeCsvValue).join(',')).join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'attendance-records.xls';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const exportToPdf = () => {
+    if (!filteredRecords.length) {
+      alert('لا توجد سجلات لهذا الشهر لحفظها في ملف PDF.');
+      return;
+    }
+
+    const printWindow = window.open('', '_blank', 'width=1200,height=800');
+
+    if (!printWindow) {
+      alert('يرجى السماح بالنوافذ المنبثقة حتى يتم تصدير الملف PDF.');
+      return;
+    }
+
+    const rows = filteredRecords.map((record) => `
+      <tr>
+        <td>${new Date(record.date).toLocaleDateString()}</td>
+        <td>${new Date(record.checkInTime).toLocaleTimeString()}</td>
+        <td>${record.checkOutTime ? new Date(record.checkOutTime).toLocaleTimeString() : 'Not checked out'}</td>
+        <td>${calculateWorkingHours(record.checkInTime, record.checkOutTime)}</td>
+        <td>${calculateOvertimeHours(record.checkInTime, record.checkOutTime)}</td>
+        <td>JD${calculateDailyWage(record.checkInTime, record.checkOutTime)}</td>
+        <td>JD${calculateOvertimeWage(record.checkInTime, record.checkOutTime)}</td>
+        <td>JD${(parseFloat(calculateDailyWage(record.checkInTime, record.checkOutTime)) + parseFloat(calculateOvertimeWage(record.checkInTime, record.checkOutTime))).toFixed(2)}</td>
+      </tr>
+    `).join('');
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Attendance Records</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 24px; color: #111827; }
+            h1 { text-align: center; margin-bottom: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #d1d5db; padding: 10px; text-align: left; }
+            th { background: #f3f4f6; }
+            .summary { margin-bottom: 20px; font-size: 18px; }
+          </style>
+        </head>
+        <body>
+          <h1>Attendance Records</h1>
+          <div class="summary">Total Wage: JD${calculateTotalWage()}</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Check-in</th>
+                <th>Check-out</th>
+                <th>Working Hours</th>
+                <th>Overtime</th>
+                <th>Daily Wage</th>
+                <th>Overtime Wage</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => printWindow.print(), 300);
+  };
 
   const handleDeleteAll = async () => {
     const confirmed = window.confirm(
@@ -263,9 +405,30 @@ export default function App() {
         <button className="btn btn-refresh" onClick={fetchRecords}>
           🔄 Refresh
         </button>
+        <button className="btn btn-export" onClick={exportToExcel}>
+          📊 Export Excel
+        </button>
+        <button className="btn btn-pdf" onClick={exportToPdf}>
+          🖨️ Export PDF
+        </button>
         <button className="btn btn-delete" onClick={handleDeleteAll}>
           🗑️ Delete All Data
         </button>
+      </div>
+
+      <div className="month-filter">
+        <label htmlFor="monthFilter">📆 الشهر:</label>
+        <select
+          id="monthFilter"
+          value={selectedMonth}
+          onChange={(e) => setSelectedMonth(e.target.value)}
+        >
+          {getMonthOptions().map((month) => (
+            <option key={month} value={month}>
+              {new Date(`${month}-01T00:00:00`).toLocaleDateString('ar-EG', { month: 'long', year: 'numeric' })}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="status">
@@ -276,7 +439,7 @@ export default function App() {
       <div className="records">
         <h2>Attendance Records</h2>
         
-        {attendanceRecords.length > 0 && (
+        {filteredRecords.length > 0 && (
           <div className="salary-summary">
             <div className="summary-card">
               <div className="summary-item">
@@ -293,7 +456,7 @@ export default function App() {
 
         {loading ? (
           <p>Loading...</p>
-        ) : attendanceRecords.length > 0 ? (
+        ) : filteredRecords.length > 0 ? (
           <table>
             <thead>
               <tr>
@@ -308,7 +471,7 @@ export default function App() {
               </tr>
             </thead>
             <tbody>
-              {attendanceRecords.map((record) => (
+              {filteredRecords.map((record) => (
                 <tr key={record._id}>
                   <td>{new Date(record.date).toLocaleDateString()}</td>
                   <td>{new Date(record.checkInTime).toLocaleTimeString()}</td>
@@ -327,7 +490,7 @@ export default function App() {
             </tbody>
           </table>
         ) : (
-          <p>No attendance records yet.</p>
+          <p>No attendance records for this month yet.</p>
         )}
       </div>
     </div>

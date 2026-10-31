@@ -33,6 +33,29 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.month-filter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 20px auto 30px;
+  padding: 12px 18px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  max-width: 460px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.month-filter select {
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: white;
+}
+
 .salary-input-group {
   display: flex;
   align-items: center;
@@ -120,6 +143,24 @@
 
 .btn-refresh:hover {
   background-color: #2563eb;
+}
+
+.btn-export {
+  background-color: #22c55e;
+  color: white;
+}
+
+.btn-export:hover {
+  background-color: #16a34a;
+}
+
+.btn-pdf {
+  background-color: #f97316;
+  color: white;
+}
+
+.btn-pdf:hover {
+  background-color: #ea580c;
 }
 
 .btn-delete {
